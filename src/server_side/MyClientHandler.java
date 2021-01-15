@@ -17,10 +17,10 @@ public class MyClientHandler implements ClientHandler {
 
 	@Override
 	public void handleClient(InputStream input, OutputStream output) {
-		// TODO Auto-generated method stub
 		BufferedReader in = new BufferedReader(new InputStreamReader(input));
 		PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(output)), true);
 		try {
+			System.out.println("start reading matrix weights");
 			List<List<Double>> lines = new ArrayList<List<Double>>();
 			String line = in.readLine();
 			
@@ -32,7 +32,10 @@ public class MyClientHandler implements ClientHandler {
 				line = in.readLine();
 			}
 			
+			System.out.println("finish reading matrix weights, first weight is: " + lines.get(0).get(0));
+			
 			String s = in.readLine();
+			System.out.println("entry location: " + s);
 			
 			String[] entryLocation = s.split(",");
 			int entryRow = Integer.parseInt(entryLocation[0]);
@@ -40,14 +43,23 @@ public class MyClientHandler implements ClientHandler {
 			BoardCell entry = new BoardCell(entryRow, entryCol, lines.get(entryRow).get(entryCol));
 			
 			s = in.readLine();
+			System.out.println("exit location: " + s);
+			
 			String[] exitLocation = s.split(",");
 			int exitRow = Integer.parseInt(exitLocation[0]);
 			int exitCol = Integer.parseInt(exitLocation[1]);
 			BoardCell exit = new BoardCell(exitRow, exitCol, lines.get(exitRow).get(exitCol));
 			
+			System.out.println("creating board");
 			SearchableBoard board = new SearchableBoard(lines, entry, exit);
+			System.out.println("board created");
+			
 			BestFirstSearcher searcher = new BestFirstSearcher();
+			
+			System.out.println("start searching for best path");
 			Solution solution = searcher.search(board);
+			System.out.println("found best path");
+			System.out.println(solution.toString());
 			out.println(solution.toString());
 			
 		} catch (IOException e) {
